@@ -13,8 +13,10 @@
   "dependencies": {
     "@remix-run/node": "^2.10.3",
     "@remix-run/react": "^2.10.3",
+    "ofetch": "^1.3.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-use-websocket": "^4.8.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.10.3",

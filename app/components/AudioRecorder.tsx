@@ -1,33 +1,21 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
-export const AudioRecorder = () => {
+interface Props {
+  onRecordingComplete?: (blob: Blob) => void;
+}
+
+export const AudioRecorder = ({ onRecordingComplete }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-  const audioEl = useRef<HTMLAudioElement>(null);
 
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
-        console.log(event);
-
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: "audio/ogg",
-        });
-        const audioURL = URL.createObjectURL(audioBlob);
-        setAudioURL(audioURL);
+        onRecordingComplete?.(event.data);
       };
 
       mediaRecorder.start();
@@ -55,33 +43,12 @@ export const AudioRecorder = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(audioEl);
-
-    if (audioEl.current) {
-      // try {
-      //   audioEl.current.load();
-      // } catch (err) {
-      //   console.error(err);
-      //   return
-      // }
-      // audioEl.current.currentTime = 0;
-      audioEl.current.play();
-    }
-  }, [audioURL]);
-
   return (
     <div>
       <button onClick={handleButtonClick}>
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
       <span>{isRecording ? "🔴 Recording..." : "⚪ Not Recording"}</span>
-      {audioURL && (
-        <div>
-          <h2>Playback</h2>
-          <audio ref={audioEl} controls src={audioURL}></audio>
-        </div>
-      )}
     </div>
   );
 };
