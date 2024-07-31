@@ -38,7 +38,7 @@ export default function Index() {
 
     if ("voiceline" in lastJsonMessage) {
       const randomChance = Math.random();
-      if (randomChance > 0.2) return;
+      if (randomChance > 0.5) return;
 
       setAudioQueue((prevQueue) => [
         ...prevQueue,
